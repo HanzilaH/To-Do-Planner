@@ -2,10 +2,21 @@
   "name": "node",
   "version": "1.0.0",
   "description": "To do planner",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",    
+    "build": "npm install" 
   },
+
+  "files": [
+  "index.js",                  // Add the entry point of your application
+  "public",                    // Include any necessary directories and files here
+  "views"
+],
+
+
+
   "author": "",
   "license": "ISC",
   "dependencies": {
