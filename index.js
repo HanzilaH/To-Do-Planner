@@ -1,29 +1,125 @@
 let tasks = [];
 let i = 0;
 let number = 0;
-let hashMap = {}
 
-function updateTasks(){
-    const apiUrl = '/api/data'; // Replace with your actual API endpoint
+const map = new Map()
+const colors = ["#C97B84", "#A85751", "#EAB2A0", "#AABA9E", "#C6B89E", "#F3AA60", "#A0BFE0"]
 
-    const postData = {
-        "tasks": tasks
-    };
 
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(postData)
-    })
-        .then(response => response.text())
-        .then(data => {
-            console.log(data); // Response from the API
-        })
-        .catch(error => {
-            console.error('Error:', error);
+
+
+
+
+/**
+ * uses a random index
+ * @returns a random color from the list of color predefined for the theme of the website
+ */
+function generateRandomColor(){
+    const colorsIndex = Math.floor(Math.random()*colors.length)
+    // return colors[colorsIndex]
+    return "lightblue"
+
+}
+
+
+
+
+
+
+/**
+ * This is the main function initially called to fetch the already stored tasks from the backend
+ * this is asynchronous so to maintain the order
+ * Notice that it automatically filters out the null items in the array and doesnt show any entries for those
+ * it called sets the height of the textareas according to their scroll height 
+ */
+async function fetchData(){
+
+    let ulList = document.getElementById("notes-list");
+
+    fetch('/api/data')
+    .then(response => response.json())
+    .then(data => {
+
+        
+        
+        tasks = data.tasks.filter((element) => element !== null);
+        
+        tasks.forEach(task => {
+
+            
+            map.set("task"+i, task)
+            let EntryCode = "<li class=\"list-group-item\"><div class=\"input-group\"><div class=\"input-group-text entry-checkbox\"><label class=\"container\"><input type=\"checkbox\"><div class=\"checkmark\"></div></label></div><textarea class=\"form-control entry-text\" placeholder=\"Enter text\" onkeyup=\"handleKeyUp(event)\" id=\"task" + i + "\">" + task + "</textarea><div onclick=\"Delete(this)\" style=\"margin-left: 10px;\" class=\"trash-bin\"></div></div></li>";
+
+            ulList.insertAdjacentHTML('beforeend', EntryCode);
+
+            const element = document.getElementById("task" + i)
+
+            const cl = generateRandomColor()
+            console.log(cl)
+            element.parentNode.parentNode.style.backgroundColor = cl
+
+
+            // This code is needed to set the height of the textarea DURING LOADING
+            element.style.height = `${element.scrollHeight}px`;
+            i++;
+
+            
         });
+
+
+    
+    })
+    .catch(error => {
+        console.error(error);
+    });
+
+}
+
+fetchData()
+
+
+
+/**
+ * This function is called when the plus icon is pressed
+ * It inserts the relevant html to add a list item
+ * It then creates a null entry in the map using the i value
+ * then it calls the function post the changes
+ * 
+ * notice that null entries are also posted
+ * 
+ */
+function AddEntry() {
+
+    let EntryCode = "<li class=\"list-group-item\"><div class=\"input-group\"><div class=\"input-group-text entry-checkbox\"><label class=\"container\"><input type=\"checkbox\"><div class=\"checkmark\"></div></label></div><textarea class=\"form-control entry-text\" placeholder=\"Enter text\" onkeyup=\"handleKeyUp(event)\" id=\"task" + (i) + "\"></textarea><div onclick=\"Delete(this)\" style=\"margin-left: 10px;\" class=\"trash-bin\"></div></div></li>";
+    let ulList = document.getElementById("notes-list");
+    ulList.insertAdjacentHTML('beforeend', EntryCode);
+
+
+    const element = document.getElementById("task" + i)
+
+    element.parentNode.parentNode.style.backgroundColor = generateRandomColor()
+
+    
+    map.set("task"+i, null)
+    postTask(map)
+    i++
+
+}
+
+
+/**
+ * This is called everytime a key is released
+ * This function updates the map and then called the function to post the updates
+ * 
+ * @param {Event} event 
+ */
+function handleKeyUp(event){
+    console.log("the value is "+event.target.value+ "ans the id is "+ event.target.id)
+    console.log(map)
+    map.set(event.target.id, event.target.value)
+    console.log(map)
+    postTask(map)
+
 }
 
 
@@ -33,42 +129,14 @@ function updateTasks(){
 
 
 
-// Make a GET request to fetch JSON data from the backend
-fetch('/api/data')
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-        tasks = data.tasks.filter((element) => element !== null);
-        updateTasks()
-        tasks.forEach(task => {
-            console.log(task);
-            Initialise(task, i);
-            i++;
-            number++;
-        });
-    })
-    .catch(error => {
-        console.error(error);
-    });
-
+//This code is separately needed to set the correct height of each textarea DURING writing 
 let ulList = document.getElementById("notes-list");
-
 ulList.addEventListener("keyup", function (e) {
     if (e.target.classList.contains("entry-text")) {
 
         let textarea = e.target;
         textarea.style.height = "30px";
-        textarea.style.height = `${textarea.scrollHeight}px`;
-
-        let textareaId = textarea.id;
-        let textareaIndex = textareaId.substring(4); // Extract index from textarea id
-
-        
-        tasks[textareaIndex] = textarea.value;
-        console.log(tasks[textareaIndex]);
-        updateTasks()
-
-        
+        textarea.style.height = `${textarea.scrollHeight}px`; 
     }
 });
 
@@ -78,6 +146,47 @@ ulList.addEventListener("keyup", function (e) {
 
 
 
+/**
+ * One of the most important functions for the application
+ * It takes an arguments of map
+ * Then it creates a temporary new array from that map 
+ * and then posts that array using the api
+ * NOTE: A map in js always stores the data in a sequence which is a major reason we dont care if the
+ * i keeps on updating in the AddEntry function
+ * The map will always create the array in the same sequence and the same sequence of array
+ * allows it to create the sequential task ids when the application is loaded
+ * 
+ * 
+ * Notice that this function doesnt care about the null entries
+ * 
+ * @param {Map} map 
+ */
+async function postTask(map) {
+
+    let j = 0;
+    const TempArrayOfTasks = Array.from(map.values());
+    const apiUrl = '/api/data'; 
+    const postData = {
+      "tasks": TempArrayOfTasks
+    };
+  
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+      });
+  
+      const data = await response.text();
+      console.log(data); // Response from the API
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  
 
 
 
@@ -87,45 +196,21 @@ ulList.addEventListener("keyup", function (e) {
 
 
 
-
-function Initialise(task, i) {
-    let EntryCode = "<li class=\"list-group-item\"><div class=\"input-group\"><div class=\"input-group-text entry-checkbox\"><label class=\"container\"><input type=\"checkbox\"><div class=\"checkmark\"></div></label></div><textarea class=\"form-control entry-text\" placeholder=\"Enter text\" id=\"task" + i + "\">" + task + "</textarea><div onclick=\"Delete(this)\" style=\"margin-left: 10px;\" class=\"trash-bin\"></div></div></li>";
-
-    let ulList = document.getElementById("notes-list");
-
-    // Append the HTML content to the element
-    ulList.insertAdjacentHTML('beforeend', EntryCode);
-    document.getElementById("task" + i).style.height = `${document.getElementById("task" + i).scrollHeight}px`;
-}
-
-function AddEntry() {
-    number++;
-    tasks[number] = null;
-    updateTasks()
-
-    let EntryCode = "<li class=\"list-group-item\"><div class=\"input-group\"><div class=\"input-group-text entry-checkbox\"><label class=\"container\"><input type=\"checkbox\"><div class=\"checkmark\"></div></label></div><textarea class=\"form-control entry-text\" placeholder=\"Enter text\" id=\"task" + number + "\"></textarea><div onclick=\"Delete(this)\" style=\"margin-left: 10px;\" class=\"trash-bin\"></div></div></li>";
-
-    let ulList = document.getElementById("notes-list");
-
-    ulList.insertAdjacentHTML('beforeend', EntryCode);
-}
-
+/**
+ * This controls the bin icon
+ * Onclick of the bin item this function is called
+ * it handles the frontend by removing the specific list item
+ * it then updates the map and calls the function to post the changes
+ * @param {div} svgElement 
+ */
 function Delete(svgElement) {
-
-
     var div = svgElement.parentNode.parentNode;
     div.parentNode.removeChild(div);
-    console.log("Delete also works");
+
+    const removeValue =  svgElement.parentNode.querySelector("textarea").value
+    const removeID = svgElement.parentNode.querySelector("textarea").id
+    map.delete(removeID)
+    postTask(map)
+
 }
 
-
-
-
-
-
-
-
-
-
-
-// This problem at this point is that the number and i index need to be fixed

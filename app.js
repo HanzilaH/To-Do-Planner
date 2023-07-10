@@ -4,6 +4,19 @@ const path = require('path');
 
 const port = 3000;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 const server = http.createServer((req, res) => {
   // Serve static files
   if (req.url === '/' || req.url === '/index.html') {

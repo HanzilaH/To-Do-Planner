@@ -7,7 +7,8 @@
 
 .list-group-item{
 
-  background-color: aquamarine;
+  /* This background color is set in the index.js file */
+  /* background-color: aquamarine; */
   border-radius: 15px;
   border-width: 0;
   margin-bottom: 15px;
