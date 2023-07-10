@@ -10,6 +10,8 @@ const colors = ["#C97B84", "#A85751", "#EAB2A0", "#AABA9E", "#C6B89E", "#F3AA60"
 
 
 
+
+
 /**
  * uses a random index
  * @returns a random color from the list of color predefined for the theme of the website
@@ -40,20 +42,32 @@ async function fetchData(){
     .then(response => response.json())
     .then(data => {
 
+        console.log(data)
+
         
         
-        tasks = data.tasks.filter((element) => element !== null);
-        
+        tasks = data.tasks.filter((element) => {
+            if (element[0] !== (null )&& element[0]!== ""){
+                return element
+            }
+            
+        });
+        console.log(tasks)
         tasks.forEach(task => {
 
             
             map.set("task"+i, task)
-            let EntryCode = "<li class=\"list-group-item\"><div class=\"input-group\"><div class=\"input-group-text entry-checkbox\"><label class=\"container\"><input type=\"checkbox\"><div class=\"checkmark\"></div></label></div><textarea class=\"form-control entry-text\" placeholder=\"Enter text\" onkeyup=\"handleKeyUp(event)\" id=\"task" + i + "\">" + task + "</textarea><div onclick=\"Delete(this)\" style=\"margin-left: 10px;\" class=\"trash-bin\"></div></div></li>";
+            let EntryCode = "<li class=\"list-group-item\"><div class=\"input-group\"><div class=\"input-group-text entry-checkbox\"><label class=\"container\"><input onClick=\"handleCheck(event)\" type=\"checkbox\"><div class=\"checkmark\"></div></label></div><textarea class=\"form-control entry-text\" placeholder=\"Enter text\" onkeyup=\"handleKeyUp(event)\" id=\"task" + i + "\">" + task[0] + "</textarea><div onclick=\"Delete(this)\" style=\"margin-left: 10px;\" class=\"trash-bin\"></div></div></li>";
 
             ulList.insertAdjacentHTML('beforeend', EntryCode);
 
-            const element = document.getElementById("task" + i)
 
+
+            const element = document.getElementById("task" + i)
+            const checkbox = element.parentNode.querySelector("input[type=\"checkbox\"]")
+            checkbox.checked = task[1]
+
+            
             const cl = generateRandomColor()
             console.log(cl)
             element.parentNode.parentNode.style.backgroundColor = cl
@@ -90,7 +104,7 @@ fetchData()
  */
 function AddEntry() {
 
-    let EntryCode = "<li class=\"list-group-item\"><div class=\"input-group\"><div class=\"input-group-text entry-checkbox\"><label class=\"container\"><input type=\"checkbox\"><div class=\"checkmark\"></div></label></div><textarea class=\"form-control entry-text\" placeholder=\"Enter text\" onkeyup=\"handleKeyUp(event)\" id=\"task" + (i) + "\"></textarea><div onclick=\"Delete(this)\" style=\"margin-left: 10px;\" class=\"trash-bin\"></div></div></li>";
+    let EntryCode = "<li class=\"list-group-item\"><div class=\"input-group\"><div class=\"input-group-text entry-checkbox\"><label class=\"container\"><input onClick = \"handleCheck(event)\" type=\"checkbox\"><div class=\"checkmark\"></div></label></div><textarea class=\"form-control entry-text\" placeholder=\"Enter text\" onkeyup=\"handleKeyUp(event)\" id=\"task" + (i) + "\"></textarea><div onclick=\"Delete(this)\" style=\"margin-left: 10px;\" class=\"trash-bin\"></div></div></li>";
     let ulList = document.getElementById("notes-list");
     ulList.insertAdjacentHTML('beforeend', EntryCode);
 
@@ -100,7 +114,7 @@ function AddEntry() {
     element.parentNode.parentNode.style.backgroundColor = generateRandomColor()
 
     
-    map.set("task"+i, null)
+    map.set("task"+i, [null, false])
     postTask(map)
     i++
 
@@ -116,10 +130,23 @@ function AddEntry() {
 function handleKeyUp(event){
     console.log("the value is "+event.target.value+ "ans the id is "+ event.target.id)
     console.log(map)
-    map.set(event.target.id, event.target.value)
+    map.set(event.target.id, [event.target.value, false])
     console.log(map)
     postTask(map)
 
+}
+
+
+function handleCheck(event){
+    const checkbox = event.target
+    const textarea = checkbox.parentNode.parentNode.parentNode.querySelector('textarea');
+    console.log(textarea)
+
+    const id =  textarea.id
+    map.set(id, [textarea.value, checkbox.checked])
+    postTask(map)
+
+    
 }
 
 
