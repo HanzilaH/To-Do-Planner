@@ -3,23 +3,56 @@ let i = 0;
 let number = 0;
 
 const map = new Map()
-const colors = ["#C97B84", "#A85751", "#EAB2A0", "#AABA9E", "#C6B89E", "#F3AA60", "#A0BFE0"]
+const colors = ["#E1EFF6", "#CFE8F8", "#BCE1F9", "#AADAFA", "#92CDFC"]
+
+const currentDate = new Date()
+const month = currentDate.toLocaleString('default', { month: 'long' });
+const day = currentDate.getDate()
+
+
+
+/**
+ * This func is for the suffix of the date
+ * @param {number} num 
+ * @returns string of the suffix
+ */
+function setSuffix(num){
+    const moduloTen = number % 10;
+    const moduloHundred = number % 100;
+  
+    if (moduloTen === 1 && moduloHundred !== 11) {
+      return "st";
+    } else if (moduloTen === 2 && moduloHundred !== 12) {
+      return "nd";
+    } else if (moduloTen === 3 && moduloHundred !== 13) {
+      return "rd";
+    } else {
+      return "th";
+    }
+}
 
 
 
 
+document.getElementById("date").textContent = `${day}${setSuffix(day)} ${month}`
+
+      
 
 
 
 
+let colorsIndex = -1;
 /**
  * uses a random index
  * @returns a random color from the list of color predefined for the theme of the website
  */
 function generateRandomColor(){
-    const colorsIndex = Math.floor(Math.random()*colors.length)
+    // const colorsIndex = Math.floor(Math.random()*colors.length)
     // return colors[colorsIndex]
-    return "lightblue"
+    colorsIndex++
+    if (colorsIndex>colors.length-1) colorsIndex = 0
+
+    return colors[colorsIndex]
 
 }
 
@@ -57,8 +90,20 @@ async function fetchData(){
 
             
             map.set("task"+i, task)
-            let EntryCode = "<li class=\"list-group-item\"><div class=\"input-group\"><div class=\"input-group-text entry-checkbox\"><label class=\"container\"><input onClick=\"handleCheck(event)\" type=\"checkbox\"><div class=\"checkmark\"></div></label></div><textarea class=\"form-control entry-text\" placeholder=\"Enter text\" onkeyup=\"handleKeyUp(event)\" id=\"task" + i + "\">" + task[0] + "</textarea><div onclick=\"Delete(this)\" style=\"margin-left: 10px;\" class=\"trash-bin\"></div></div></li>";
-
+            let EntryCode = `
+            <li class="list-group-item">
+                <div class="input-group">
+                    <div class="input-group-text entry-checkbox">
+                        <label class="container">
+                            <input onClick="handleCheck(event)" type="checkbox">
+                            <div class="checkmark"></div>
+                        </label>
+                    </div>
+                    <textarea  class="form-control entry-text" placeholder="Enter text" onkeyup="handleKeyUp(event)" id="task${i}">${task[0]}</textarea>
+                    <div onclick="Delete(this)" style="margin-left: 10px;" class="trash-bin"></div>
+                </div>
+            </li>
+        `;
             ulList.insertAdjacentHTML('beforeend', EntryCode);
 
 
@@ -69,7 +114,6 @@ async function fetchData(){
 
             
             const cl = generateRandomColor()
-            console.log(cl)
             element.parentNode.parentNode.style.backgroundColor = cl
 
 
@@ -137,6 +181,10 @@ function handleKeyUp(event){
 }
 
 
+/**
+ * This function edits the data whenever the checkbox is clicked
+ * @param {Event} event 
+ */
 function handleCheck(event){
     const checkbox = event.target
     const textarea = checkbox.parentNode.parentNode.parentNode.querySelector('textarea');
