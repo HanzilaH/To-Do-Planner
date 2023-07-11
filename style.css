@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
+
+
+
+
+
 #title{
   font-family: 'Pacifico', cursive;
   color: #5aa7eb;
@@ -267,18 +272,56 @@ textarea.form-control:focus {
 
 
 
+/* -----------------------------------------animation for textbox--------------------------- */
+
+
+
+@keyframes slideIn {
+  0% {
+    transform: translateX(-10%);
+    opacity: 0;
+  }
+  70%{
+    transform: translateX(+3%);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animation {
+  
+  animation-name: slideIn;
+  animation-duration: 0.3s;
+  animation-delay: 0s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+}
 
 
 
 
+/* --------------------------animation for title----------------------------------------- */
+@keyframes fade {
+  0%{
+    opacity: 0;
+  }
+
+  100%{
+    opacity: 1;
+  }
+}
 
 
 
 
-
-
-
-
+.title-animation{
+  animation-name: fade;
+  animation-duration: 0.4s;
+  animation-timing-function: ease-in-out;
+}
 
 
 
@@ -338,7 +381,20 @@ textarea::-webkit-scrollbar{
 
 }
 
+.trash-bin:hover {
+  /* Hover styles */
+  cursor: pointer;
+  opacity: 0.8;
+  transform: scale(1.3);
+}
 
 
 
 
+
+
+.graphics{
+  background: repeating-linear-gradient(45deg, #ca4242, #f0f0f0 10px, #e0e0e0 10px, #e0e0e0 20px);
+  
+  
+}

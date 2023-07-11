@@ -16,19 +16,19 @@ const day = currentDate.getDate()
  * @param {number} num 
  * @returns string of the suffix
  */
-function setSuffix(num){
-    const moduloTen = number % 10;
-    const moduloHundred = number % 100;
-  
-    if (moduloTen === 1 && moduloHundred !== 11) {
-      return "st";
-    } else if (moduloTen === 2 && moduloHundred !== 12) {
-      return "nd";
-    } else if (moduloTen === 3 && moduloHundred !== 13) {
-      return "rd";
-    } else {
-      return "th";
-    }
+function setSuffix(num) {
+  const moduloTen = number % 10;
+  const moduloHundred = number % 100;
+
+  if (moduloTen === 1 && moduloHundred !== 11) {
+    return "st";
+  } else if (moduloTen === 2 && moduloHundred !== 12) {
+    return "nd";
+  } else if (moduloTen === 3 && moduloHundred !== 13) {
+    return "rd";
+  } else {
+    return "th";
+  }
 }
 
 
@@ -36,7 +36,7 @@ function setSuffix(num){
 
 document.getElementById("date").textContent = `${day}${setSuffix(day)} ${month}`
 
-      
+
 
 
 
@@ -46,13 +46,13 @@ let colorsIndex = -1;
  * uses a random index
  * @returns a random color from the list of color predefined for the theme of the website
  */
-function generateRandomColor(){
-    // const colorsIndex = Math.floor(Math.random()*colors.length)
-    // return colors[colorsIndex]
-    colorsIndex++
-    if (colorsIndex>colors.length-1) colorsIndex = 0
+function generateRandomColor() {
+  // const colorsIndex = Math.floor(Math.random()*colors.length)
+  // return colors[colorsIndex]
+  colorsIndex++
+  if (colorsIndex > colors.length - 1) colorsIndex = 0
 
-    return colors[colorsIndex]
+  return colors[colorsIndex]
 
 }
 
@@ -67,30 +67,30 @@ function generateRandomColor(){
  * Notice that it automatically filters out the null items in the array and doesnt show any entries for those
  * it called sets the height of the textareas according to their scroll height 
  */
-async function fetchData(){
+async function fetchData() {
 
-    let ulList = document.getElementById("notes-list");
+  let ulList = document.getElementById("notes-list");
 
-    fetch('/api/data')
+  fetch('/api/data')
     .then(response => response.json())
     .then(data => {
 
-        console.log(data)
+      console.log(data)
 
-        
-        
-        tasks = data.tasks.filter((element) => {
-            if (element[0] !== (null )&& element[0]!== ""){
-                return element
-            }
-            
-        });
-        console.log(tasks)
-        tasks.forEach(task => {
 
-            
-            map.set("task"+i, task)
-            let EntryCode = `
+
+      tasks = data.tasks.filter((element) => {
+        if (element[0] !== (null) && element[0] !== "") {
+          return element
+        }
+
+      });
+      console.log(tasks)
+      tasks.forEach(task => {
+
+
+        map.set("task" + i, task)
+        let EntryCode = `
             <li class="list-group-item">
                 <div class="input-group">
                     <div class="input-group-text entry-checkbox">
@@ -104,31 +104,42 @@ async function fetchData(){
                 </div>
             </li>
         `;
-            ulList.insertAdjacentHTML('beforeend', EntryCode);
+        ulList.insertAdjacentHTML('beforeend', EntryCode);
 
 
 
-            const element = document.getElementById("task" + i)
-            const checkbox = element.parentNode.querySelector("input[type=\"checkbox\"]")
-            checkbox.checked = task[1]
-
-            
-            const cl = generateRandomColor()
-            element.parentNode.parentNode.style.backgroundColor = cl
+        const element = document.getElementById("task" + i)
+        const checkbox = element.parentNode.querySelector("input[type=\"checkbox\"]")
+        checkbox.checked = task[1]
 
 
-            // This code is needed to set the height of the textarea DURING LOADING
-            element.style.height = `${element.scrollHeight}px`;
-            i++;
+        const cl = generateRandomColor()
+        element.parentNode.parentNode.style.backgroundColor = cl
 
-            
-        });
+        
+        
+        element.parentNode.parentNode.style.opacity = 0
+        element.parentNode.parentNode.classList.add('animation');
+
+        // setTimeout(function() {
+        //   element.parentNode.parentNode.classList.add('animation');
+        // }, 10);
 
 
-    
+
+
+        // This code is needed to set the height of the textarea DURING LOADING
+        element.style.height = `${element.scrollHeight}px`;
+        i++;
+
+
+      });
+
+
+
     })
     .catch(error => {
-        console.error(error);
+      console.error(error);
     });
 
 }
@@ -148,19 +159,19 @@ fetchData()
  */
 function AddEntry() {
 
-    let EntryCode = "<li class=\"list-group-item\"><div class=\"input-group\"><div class=\"input-group-text entry-checkbox\"><label class=\"container\"><input onClick = \"handleCheck(event)\" type=\"checkbox\"><div class=\"checkmark\"></div></label></div><textarea class=\"form-control entry-text\" placeholder=\"Enter text\" onkeyup=\"handleKeyUp(event)\" id=\"task" + (i) + "\"></textarea><div onclick=\"Delete(this)\" style=\"margin-left: 10px;\" class=\"trash-bin\"></div></div></li>";
-    let ulList = document.getElementById("notes-list");
-    ulList.insertAdjacentHTML('beforeend', EntryCode);
+  let EntryCode = "<li class=\"list-group-item\"><div class=\"input-group\"><div class=\"input-group-text entry-checkbox\"><label class=\"container\"><input onClick = \"handleCheck(event)\" type=\"checkbox\"><div class=\"checkmark\"></div></label></div><textarea class=\"form-control entry-text\" placeholder=\"Enter text\" onkeyup=\"handleKeyUp(event)\" id=\"task" + (i) + "\"></textarea><div onclick=\"Delete(this)\" style=\"margin-left: 10px;\" class=\"trash-bin\"></div></div></li>";
+  let ulList = document.getElementById("notes-list");
+  ulList.insertAdjacentHTML('beforeend', EntryCode);
 
 
-    const element = document.getElementById("task" + i)
+  const element = document.getElementById("task" + i)
 
-    element.parentNode.parentNode.style.backgroundColor = generateRandomColor()
+  element.parentNode.parentNode.style.backgroundColor = generateRandomColor()
 
-    
-    map.set("task"+i, [null, false])
-    postTask(map)
-    i++
+
+  map.set("task" + i, [null, false])
+  postTask(map)
+  i++
 
 }
 
@@ -171,12 +182,12 @@ function AddEntry() {
  * 
  * @param {Event} event 
  */
-function handleKeyUp(event){
-    console.log("the value is "+event.target.value+ "ans the id is "+ event.target.id)
-    console.log(map)
-    map.set(event.target.id, [event.target.value, false])
-    console.log(map)
-    postTask(map)
+function handleKeyUp(event) {
+  console.log("the value is " + event.target.value + "ans the id is " + event.target.id)
+  console.log(map)
+  map.set(event.target.id, [event.target.value, false])
+  console.log(map)
+  postTask(map)
 
 }
 
@@ -185,16 +196,16 @@ function handleKeyUp(event){
  * This function edits the data whenever the checkbox is clicked
  * @param {Event} event 
  */
-function handleCheck(event){
-    const checkbox = event.target
-    const textarea = checkbox.parentNode.parentNode.parentNode.querySelector('textarea');
-    console.log(textarea)
+function handleCheck(event) {
+  const checkbox = event.target
+  const textarea = checkbox.parentNode.parentNode.parentNode.querySelector('textarea');
+  console.log(textarea)
 
-    const id =  textarea.id
-    map.set(id, [textarea.value, checkbox.checked])
-    postTask(map)
+  const id = textarea.id
+  map.set(id, [textarea.value, checkbox.checked])
+  postTask(map)
 
-    
+
 }
 
 
@@ -207,12 +218,12 @@ function handleCheck(event){
 //This code is separately needed to set the correct height of each textarea DURING writing 
 let ulList = document.getElementById("notes-list");
 ulList.addEventListener("keyup", function (e) {
-    if (e.target.classList.contains("entry-text")) {
+  if (e.target.classList.contains("entry-text")) {
 
-        let textarea = e.target;
-        textarea.style.height = "30px";
-        textarea.style.height = `${textarea.scrollHeight}px`; 
-    }
+    let textarea = e.target;
+    textarea.style.height = "30px";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }
 });
 
 
@@ -238,30 +249,30 @@ ulList.addEventListener("keyup", function (e) {
  */
 async function postTask(map) {
 
-    let j = 0;
-    const TempArrayOfTasks = Array.from(map.values());
-    const apiUrl = '/api/data'; 
-    const postData = {
-      "tasks": TempArrayOfTasks
-    };
-  
+  let j = 0;
+  const TempArrayOfTasks = Array.from(map.values());
+  const apiUrl = '/api/data';
+  const postData = {
+    "tasks": TempArrayOfTasks
+  };
 
-    try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(postData)
-      });
-  
-      const data = await response.text();
-      console.log(data); // Response from the API
-    } catch (error) {
-      console.error('Error:', error);
-    }
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(postData)
+    });
+
+    const data = await response.text();
+    console.log(data); // Response from the API
+  } catch (error) {
+    console.error('Error:', error);
   }
-  
+}
+
 
 
 
@@ -279,13 +290,13 @@ async function postTask(map) {
  * @param {div} svgElement 
  */
 function Delete(svgElement) {
-    var div = svgElement.parentNode.parentNode;
-    div.parentNode.removeChild(div);
+  var div = svgElement.parentNode.parentNode;
+  div.parentNode.removeChild(div);
 
-    const removeValue =  svgElement.parentNode.querySelector("textarea").value
-    const removeID = svgElement.parentNode.querySelector("textarea").id
-    map.delete(removeID)
-    postTask(map)
+  const removeValue = svgElement.parentNode.querySelector("textarea").value
+  const removeID = svgElement.parentNode.querySelector("textarea").id
+  map.delete(removeID)
+  postTask(map)
 
 }
 
