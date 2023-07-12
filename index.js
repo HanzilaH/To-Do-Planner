@@ -1,8 +1,12 @@
 let tasks = [];
 let i = 0;
-let number = 0;
 
+
+// map is one of the most imp variables thats used to keep track of the values and the checked
+// status for a single user
 const map = new Map()
+
+
 const colors = ["#E1EFF6", "#CFE8F8", "#BCE1F9", "#AADAFA", "#92CDFC"]
 
 const currentDate = new Date()
@@ -17,8 +21,8 @@ const day = currentDate.getDate()
  * @returns string of the suffix
  */
 function setSuffix(num) {
-  const moduloTen = number % 10;
-  const moduloHundred = number % 100;
+  const moduloTen = num % 10;
+  const moduloHundred = num % 100;
 
   if (moduloTen === 1 && moduloHundred !== 11) {
     return "st";
@@ -33,7 +37,7 @@ function setSuffix(num) {
 
 
 
-
+// this is to set the date initially
 document.getElementById("date").textContent = `${day}${setSuffix(day)} ${month}`
 
 
@@ -43,8 +47,8 @@ document.getElementById("date").textContent = `${day}${setSuffix(day)} ${month}`
 
 let colorsIndex = -1;
 /**
- * uses a random index
- * @returns a random color from the list of color predefined for the theme of the website
+ * uses a fixed color gradient
+ * @returns a color from the list of color predefined for the theme of the website
  */
 function generateRandomColor() {
   // const colorsIndex = Math.floor(Math.random()*colors.length)
@@ -121,9 +125,13 @@ async function fetchData() {
         element.parentNode.parentNode.style.opacity = 0
         element.parentNode.parentNode.classList.add('animation');
 
-        // setTimeout(function() {
-        //   element.parentNode.parentNode.classList.add('animation');
-        // }, 10);
+        setTimeout(function() {
+          // animation class is immediately removed so to fix another bug
+          // if i dont remove the animation class immediately then the trash-animation
+          // does not work immediately
+          element.parentNode.parentNode.classList.remove('animation');
+          element.parentNode.parentNode.style.opacity = 1
+        }, 1500);
 
 
 
@@ -291,7 +299,17 @@ async function postTask(map) {
  */
 function Delete(svgElement) {
   var div = svgElement.parentNode.parentNode;
-  div.parentNode.removeChild(div);
+  
+  // animation is played AFTER the delete button is pressed
+  div.classList.add('trash-animation')
+  console.log(div.classList)
+
+
+  // this timeout is required so that the div is removed after the animation played
+  setTimeout(()=>{
+      div.parentNode.removeChild(div);
+
+  }, 400)
 
   const removeValue = svgElement.parentNode.querySelector("textarea").value
   const removeID = svgElement.parentNode.querySelector("textarea").id
