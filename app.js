@@ -49,6 +49,21 @@ const server = http.createServer((req, res) => {
         res.end();
       }
     });
+  } else if (req.url === '/graphics.css') {
+    const filePath = path.join(__dirname, 'graphics.css');
+    const contentType = 'text/css';
+
+    fs.readFile(filePath, (error, data) => {
+      if (error) {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.write('Error: File not found');
+        res.end();
+      } else {
+        res.writeHead(200, { 'Content-Type': contentType });
+        res.write(data);
+        res.end();
+      }
+    });
   } else if (req.url === '/index.js') {
     const filePath = path.join(__dirname, 'index.js');
     const contentType = 'text/javascript';

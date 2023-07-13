@@ -11,12 +11,14 @@
 
 </head>
 
-<body>
+<body >
+
+<!-- THis is the class for a section that i could not fix 
+This was to bring one section on top of another -->
+    <!-- <section style="opacity: 0;" class="z-3 position-relative"> -->
 
 
-
-
-    <section>
+    <section >
 
 
         <!-- ----------------------Heading---------------------------------------------------- -->
@@ -35,8 +37,9 @@
 
 
         <div style="margin-top: 5%;" class="container">
+
             <div class="row">
-                <div class="col-md-10 col-lg-10 col-sm-12  mx-auto">
+                <div class="col-md-10 col-lg-10 col-sm-12 z-3 mx-auto">
                     <div style="min-height: 60vh; padding-top: 5%; padding-left: 3% ;" class="card">
                         <div class="card-body">
 
@@ -66,20 +69,60 @@
                             
                             
                         </div>
+
+
+                        
                     </div>
+
+                    
+
+
+
                 </div>
+
+                
+                
             </div>
+
+
+
         </div>
         </div>
     </section>
-    <section id="graphics" style="height: 100vh;">
+
+
+<!-- 
+
+    <section class="position-absolute top-50 end-50 z-1 vh-100 vw-100">
         <div class="container">
-            <div class="graphics row">
-                
-                
+          <div class="row">
+            <div class="col-2">
+              <div class="graphic-one position-absolute top-0 end-0">
+                <h1>Top Right</h1>
+              </div>
             </div>
+          </div>
         </div>
-    </section>
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-2">
+              <div class="graphic-one position-absolute top-50 start-0 translate-middle-y">
+                <h1>Middle Left</h1>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="row justify-content-end">
+            <div class="col-2">
+              <div class="graphic-one position-absolute bottom-0 end-0">
+                <h1>Bottom Right</h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+       -->
 
 
     <script src="index.js"></script>

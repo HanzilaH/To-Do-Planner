@@ -113,6 +113,8 @@ async function fetchData() {
 
 
         const element = document.getElementById("task" + i)
+
+
         const checkbox = element.parentNode.querySelector("input[type=\"checkbox\"]")
         checkbox.checked = task[1]
 
@@ -132,6 +134,19 @@ async function fetchData() {
           element.parentNode.parentNode.classList.remove('animation');
           element.parentNode.parentNode.style.opacity = 1
         }, 1500);
+
+
+
+
+        // these two are need for a hover effect over the textbox
+        // notice that hovering over the textbox changes the box shadow of the li item
+        element.addEventListener('mouseover', function() {
+          element.parentNode.parentNode.classList.add('hover-effect');
+        });
+        
+        element.addEventListener('mouseout', function() {
+          element.parentNode.parentNode.classList.remove('hover-effect');
+        });
 
 
 
