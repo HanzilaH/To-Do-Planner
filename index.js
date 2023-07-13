@@ -119,8 +119,8 @@ async function fetchData() {
         checkbox.checked = task[1]
 
 
-        const cl = generateRandomColor()
-        element.parentNode.parentNode.style.backgroundColor = cl
+        
+        element.parentNode.parentNode.style.backgroundColor =  generateRandomColor()
 
         
         
@@ -133,7 +133,7 @@ async function fetchData() {
           // does not work immediately
           element.parentNode.parentNode.classList.remove('animation');
           element.parentNode.parentNode.style.opacity = 1
-        }, 1500);
+        }, 800);
 
 
 
@@ -190,6 +190,16 @@ function AddEntry() {
   const element = document.getElementById("task" + i)
 
   element.parentNode.parentNode.style.backgroundColor = generateRandomColor()
+
+  // these two are need for a hover effect over the textbox
+  // notice that hovering over the textbox changes the box shadow of the li item
+  element.addEventListener('mouseover', function() {
+    element.parentNode.parentNode.classList.add('hover-effect');
+  });
+  
+  element.addEventListener('mouseout', function() {
+    element.parentNode.parentNode.classList.remove('hover-effect');
+  });
 
 
   map.set("task" + i, [null, false])

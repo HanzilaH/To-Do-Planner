@@ -34,23 +34,48 @@ const server = http.createServer((req, res) => {
         res.end();
       }
     });
-  } else if (req.url === '/style.css') {
-    const filePath = path.join(__dirname, 'style.css');
-    const contentType = 'text/css';
+  }
+   else if (req.url === '/api/data') {
+    if (req.method === 'GET') {
+      const filePath = path.join(__dirname, 'data.json');
+      const contentType = 'application/json';
 
-    fs.readFile(filePath, (error, data) => {
-      if (error) {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.write('Error: File not found');
-        res.end();
-      } else {
-        res.writeHead(200, { 'Content-Type': contentType });
-        res.write(data);
-        res.end();
-      }
-    });
-  } else if (req.url === '/graphics.css') {
-    const filePath = path.join(__dirname, 'graphics.css');
+      fs.readFile(filePath, (error, data) => {
+        if (error) {
+          res.writeHead(500, { 'Content-Type': 'text/plain' });
+          res.write('Error: Unable to read JSON file');
+          res.end();
+        } else {
+          res.writeHead(200, { 'Content-Type': contentType });
+          res.write(data);
+          res.end();
+        }
+      });
+    } else if (req.method === 'POST') {
+      let body = '';
+      req.on('data', (chunk) => {
+        body += chunk;
+      });
+
+      req.on('end', () => {
+        const filePath = path.join(__dirname, 'data.json');
+
+        fs.writeFile(filePath, body, (error) => {
+          if (error) {
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.write('Error: Unable to write JSON file');
+            res.end();
+          } else {
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
+            res.write('JSON data written successfully');
+            res.end();
+          }
+        });
+      });
+    }
+  }
+   else if (req.url === '/style.css') {
+    const filePath = path.join(__dirname, 'style.css');
     const contentType = 'text/css';
 
     fs.readFile(filePath, (error, data) => {
@@ -95,45 +120,7 @@ const server = http.createServer((req, res) => {
       }
     });
   }
-   else if (req.url === '/api/data') {
-    if (req.method === 'GET') {
-      const filePath = path.join(__dirname, 'data.json');
-      const contentType = 'application/json';
-
-      fs.readFile(filePath, (error, data) => {
-        if (error) {
-          res.writeHead(500, { 'Content-Type': 'text/plain' });
-          res.write('Error: Unable to read JSON file');
-          res.end();
-        } else {
-          res.writeHead(200, { 'Content-Type': contentType });
-          res.write(data);
-          res.end();
-        }
-      });
-    } else if (req.method === 'POST') {
-      let body = '';
-      req.on('data', (chunk) => {
-        body += chunk;
-      });
-
-      req.on('end', () => {
-        const filePath = path.join(__dirname, 'data.json');
-
-        fs.writeFile(filePath, body, (error) => {
-          if (error) {
-            res.writeHead(500, { 'Content-Type': 'text/plain' });
-            res.write('Error: Unable to write JSON file');
-            res.end();
-          } else {
-            res.writeHead(200, { 'Content-Type': 'text/plain' });
-            res.write('JSON data written successfully');
-            res.end();
-          }
-        });
-      });
-    }
-  } else {
+   else {
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.write('Error: File not found');
     res.end();

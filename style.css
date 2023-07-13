@@ -298,7 +298,7 @@ textarea.form-control:focus {
 .animation {
   
   animation-name: slideIn;
-  animation-duration: 1s;
+  animation-duration: 0.8s;
   animation-delay: 0s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: forwards;
